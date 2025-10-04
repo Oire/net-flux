@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>Oire.NetFlux</PackageId>
+    <Authors>André Polykanine</Authors>
+    <Company>Oire Software</Company>
+    <Product>NetFlux</Product>
+    <Description>A comprehensive .NET client library for the Miniflux RSS reader REST API</Description>
+    <Copyright>Copyright © 2025 Oire Software</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Oire/net-flux</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Oire/net-flux</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>miniflux;rss;feed;reader;api;client</PackageTags>
+    <Version>1.0.0</Version>
+    <RootNamespace>Oire.NetFlux</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>
