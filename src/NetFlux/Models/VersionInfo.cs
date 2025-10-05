@@ -5,8 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Oire.NetFlux.Models;
 
-public class VersionInfo
-{
+public class VersionInfo {
     [JsonPropertyName("version")]
     public string Version { get; set; } = string.Empty;
 

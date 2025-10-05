@@ -5,8 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Oire.NetFlux.Models;
 
-public class ApiKey
-{
+public class ApiKey {
     [JsonPropertyName("id")]
     public long Id { get; set; }
 
@@ -26,8 +25,7 @@ public class ApiKey
     public DateTime CreatedAt { get; set; }
 }
 
-public class ApiKeyCreateRequest
-{
+public class ApiKeyCreateRequest {
     [JsonPropertyName("description")]
     public required string Description { get; set; }
 }

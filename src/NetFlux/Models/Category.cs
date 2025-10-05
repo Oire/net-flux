@@ -5,8 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Oire.NetFlux.Models;
 
-public class Category
-{
+public class Category {
     [JsonPropertyName("id")]
     public long Id { get; set; }
 
@@ -29,24 +28,4 @@ public class Category
     public int? TotalUnread { get; set; }
 
     public override string ToString() => $"#{Id} {Title}";
-}
-
-public class CategoryCreateRequest
-{
-    [JsonPropertyName("title")]
-    public required string Title { get; set; }
-
-    [JsonPropertyName("hide_globally")]
-    public bool HideGlobally { get; set; }
-}
-
-public class CategoryUpdateRequest
-{
-    [JsonPropertyName("title")]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string? Title { get; set; }
-
-    [JsonPropertyName("hide_globally")]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public bool? HideGlobally { get; set; }
 }

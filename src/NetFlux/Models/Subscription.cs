@@ -5,8 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Oire.NetFlux.Models;
 
-public class Subscription
-{
+public class Subscription {
     [JsonPropertyName("title")]
     public string Title { get; set; } = string.Empty;
 
