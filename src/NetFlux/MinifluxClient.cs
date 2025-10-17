@@ -20,7 +20,8 @@ public class MinifluxClient: IDisposable {
     /// <param name="endpoint">The Miniflux server URL</param>
     /// <param name="username">Username for authentication</param>
     /// <param name="password">Password for authentication</param>
-    public MinifluxClient(string endpoint, string username, string password) {
+    /// <param name="timeout">Optional timeout for HTTP requests</param>
+    public MinifluxClient(string endpoint, string username, string password, TimeSpan? timeout = null) {
         if (string.IsNullOrWhiteSpace(endpoint)) {
             throw new ArgumentNullException(nameof(endpoint));
         }
@@ -31,7 +32,7 @@ public class MinifluxClient: IDisposable {
             throw new ArgumentNullException(nameof(password));
         }
 
-        _httpClient = new MinifluxHttpClient(endpoint, username, password, null);
+        _httpClient = new MinifluxHttpClient(endpoint, username, password, null, timeout);
     }
 
     /// <summary>
@@ -39,7 +40,8 @@ public class MinifluxClient: IDisposable {
     /// </summary>
     /// <param name="endpoint">The Miniflux server URL</param>
     /// <param name="apiKey">API key for authentication</param>
-    public MinifluxClient(string endpoint, string apiKey) {
+    /// <param name="timeout">Optional timeout for HTTP requests</param>
+    public MinifluxClient(string endpoint, string apiKey, TimeSpan? timeout = null) {
         if (string.IsNullOrWhiteSpace(endpoint)) {
             throw new ArgumentNullException(nameof(endpoint));
         }
@@ -47,7 +49,7 @@ public class MinifluxClient: IDisposable {
             throw new ArgumentNullException(nameof(apiKey));
         }
 
-        _httpClient = new MinifluxHttpClient(endpoint, null, null, apiKey);
+        _httpClient = new MinifluxHttpClient(endpoint, null, null, apiKey, timeout);
     }
 
     #region Health and Version

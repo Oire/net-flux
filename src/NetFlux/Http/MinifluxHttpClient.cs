@@ -23,7 +23,7 @@ internal class MinifluxHttpClient: IDisposable {
     private const string UserAgent = "NetFlux Client Library";
     private const int DefaultTimeoutSeconds = 80;
 
-    public MinifluxHttpClient(string endpoint, string? username = null, string? password = null, string? apiKey = null) {
+    public MinifluxHttpClient(string endpoint, string? username = null, string? password = null, string? apiKey = null, TimeSpan? timeout = null) {
         if (string.IsNullOrWhiteSpace(endpoint)) {
             throw new MinifluxConfigurationException("Endpoint cannot be empty.");
         }
@@ -34,7 +34,7 @@ internal class MinifluxHttpClient: IDisposable {
         _apiKey = apiKey;
 
         _httpClient = new HttpClient {
-            Timeout = TimeSpan.FromSeconds(DefaultTimeoutSeconds)
+            Timeout = timeout ?? TimeSpan.FromSeconds(DefaultTimeoutSeconds)
         };
 
         _jsonOptions = new JsonSerializerOptions {
