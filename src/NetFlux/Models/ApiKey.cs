@@ -24,8 +24,3 @@ public class ApiKey {
     [JsonPropertyName("created_at")]
     public DateTime CreatedAt { get; set; }
 }
-
-public class ApiKeyCreateRequest {
-    [JsonPropertyName("description")]
-    public required string Description { get; set; }
-}
