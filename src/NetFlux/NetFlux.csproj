@@ -1,6 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Oire.NetFlux</RootNamespace>
+    
+    <!-- Package properties -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Oire.NetFlux</PackageId>
     <Authors>André Polykanine</Authors>
@@ -14,7 +20,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>miniflux;rss;feed;reader;api;client</PackageTags>
     <Version>1.0.0</Version>
-    <RootNamespace>Oire.NetFlux</RootNamespace>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
