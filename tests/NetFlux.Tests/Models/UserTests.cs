@@ -5,16 +5,13 @@ using Oire.NetFlux.Tests.Fixtures;
 
 namespace Oire.NetFlux.Tests.Models;
 
-public class UserTests
-{
-    private readonly JsonSerializerOptions _jsonOptions = new()
-    {
+public class UserTests {
+    private readonly JsonSerializerOptions _jsonOptions = new() {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     [Fact]
-    public void Should_Serialize_User_To_Json()
-    {
+    public void Should_Serialize_User_To_Json() {
         // Arrange
         var user = TestDataFactory.CreateUser();
 
@@ -51,8 +48,7 @@ public class UserTests
     }
 
     [Fact]
-    public void Should_Deserialize_User_From_Json()
-    {
+    public void Should_Deserialize_User_From_Json() {
         // Arrange
         var json = """
         {
@@ -125,8 +121,7 @@ public class UserTests
     }
 
     [Fact]
-    public void Should_Format_ToString_Correctly()
-    {
+    public void Should_Format_ToString_Correctly() {
         // Arrange
         var user = new User { Id = 42, Username = "testuser", IsAdmin = false };
 
@@ -138,11 +133,9 @@ public class UserTests
     }
 
     [Fact]
-    public void UserCreateRequest_Should_Serialize_Correctly()
-    {
+    public void UserCreateRequest_Should_Serialize_Correctly() {
         // Arrange
-        var request = new UserCreateRequest
-        {
+        var request = new UserCreateRequest {
             Username = "newuser",
             Password = "secure123",
             IsAdmin = true,
@@ -164,11 +157,9 @@ public class UserTests
     }
 
     [Fact]
-    public void UserUpdateRequest_Should_Handle_Nullable_Properties()
-    {
+    public void UserUpdateRequest_Should_Handle_Nullable_Properties() {
         // Arrange
-        var request = new UserUpdateRequest
-        {
+        var request = new UserUpdateRequest {
             Username = "updateduser",
             IsAdmin = false,
             Theme = null,
@@ -177,7 +168,7 @@ public class UserTests
 
         // Act
         var json = JsonSerializer.Serialize(request, _jsonOptions);
-        
+
         // Assert
         json.Should().Contain("\"username\":\"updateduser\"");
         json.Should().Contain("\"is_admin\":false");

@@ -5,10 +5,8 @@ using Oire.NetFlux.Helpers;
 
 namespace Oire.NetFlux.Tests.Helpers;
 
-public class BoolToStringConverterTests
-{
-    private readonly JsonSerializerOptions _jsonOptions = new()
-    {
+public class BoolToStringConverterTests {
+    private readonly JsonSerializerOptions _jsonOptions = new() {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         Converters = { new BoolToStringConverter() }
     };
@@ -17,8 +15,7 @@ public class BoolToStringConverterTests
     [InlineData(true, "\"1\"")]
     [InlineData(false, "\"0\"")]
     [InlineData(null, "null")]
-    public void Should_Serialize_Boolean_To_String(bool? value, string expected)
-    {
+    public void Should_Serialize_Boolean_To_String(bool? value, string expected) {
         // Arrange
         var obj = new { Value = value };
 
@@ -33,8 +30,7 @@ public class BoolToStringConverterTests
     [InlineData("\"1\"", true)]
     [InlineData("\"0\"", false)]
     [InlineData("null", null)]
-    public void Should_Deserialize_String_To_Boolean(string jsonValue, bool? expected)
-    {
+    public void Should_Deserialize_String_To_Boolean(string jsonValue, bool? expected) {
         // Arrange
         var json = $"{{\"value\":{jsonValue}}}";
 
@@ -47,8 +43,7 @@ public class BoolToStringConverterTests
     }
 
     [Fact]
-    public void Should_Handle_Direct_Write_And_Read()
-    {
+    public void Should_Handle_Direct_Write_And_Read() {
         // Arrange
         var converter = new BoolToStringConverter();
         using var stream = new MemoryStream();
@@ -72,8 +67,7 @@ public class BoolToStringConverterTests
     }
 
     [Fact]
-    public void ToQueryString_Should_Convert_Correctly()
-    {
+    public void ToQueryString_Should_Convert_Correctly() {
         // Act & Assert
         BoolToStringConverter.ToQueryString(true).Should().Be("1");
         BoolToStringConverter.ToQueryString(false).Should().Be("0");
@@ -81,8 +75,7 @@ public class BoolToStringConverterTests
     }
 
     [Fact]
-    public void FromString_Should_Convert_Correctly()
-    {
+    public void FromString_Should_Convert_Correctly() {
         // Act & Assert
         BoolToStringConverter.FromString("1").Should().BeTrue();
         BoolToStringConverter.FromString("0").Should().BeFalse();
@@ -92,8 +85,7 @@ public class BoolToStringConverterTests
     }
 
     [Fact]
-    public void Should_Only_Handle_Nullable_Boolean()
-    {
+    public void Should_Only_Handle_Nullable_Boolean() {
         // Arrange
         var obj = new NonNullableTestObject { Value = true };
 
@@ -108,8 +100,7 @@ public class BoolToStringConverterTests
     }
 
     [Fact]
-    public void Should_Handle_Array_Of_Booleans()
-    {
+    public void Should_Handle_Array_Of_Booleans() {
         // Arrange
         var obj = new { Values = new bool?[] { true, false, null, true } };
 
@@ -121,8 +112,7 @@ public class BoolToStringConverterTests
     }
 
     [Fact]
-    public void Should_Handle_Invalid_Json_Value_As_Null()
-    {
+    public void Should_Handle_Invalid_Json_Value_As_Null() {
         // Arrange
         var json = "{\"value\":123}"; // Invalid: not a string or null
 
@@ -134,13 +124,11 @@ public class BoolToStringConverterTests
         result!.Value.Should().BeNull();
     }
 
-    private class TestObject
-    {
+    private class TestObject {
         public bool? Value { get; set; }
     }
 
-    private class NonNullableTestObject
-    {
+    private class NonNullableTestObject {
         public bool Value { get; set; }
     }
 }

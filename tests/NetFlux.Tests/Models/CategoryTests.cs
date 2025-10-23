@@ -5,16 +5,13 @@ using Oire.NetFlux.Tests.Fixtures;
 
 namespace Oire.NetFlux.Tests.Models;
 
-public class CategoryTests
-{
-    private readonly JsonSerializerOptions _jsonOptions = new()
-    {
+public class CategoryTests {
+    private readonly JsonSerializerOptions _jsonOptions = new() {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     [Fact]
-    public void Should_Serialize_Category_To_Json()
-    {
+    public void Should_Serialize_Category_To_Json() {
         // Arrange
         var category = TestDataFactory.CreateCategory();
 
@@ -33,8 +30,7 @@ public class CategoryTests
     }
 
     [Fact]
-    public void Should_Deserialize_Category_From_Json()
-    {
+    public void Should_Deserialize_Category_From_Json() {
         // Arrange
         var json = """
         {
@@ -61,8 +57,7 @@ public class CategoryTests
     }
 
     [Fact]
-    public void Should_Format_ToString_Correctly()
-    {
+    public void Should_Format_ToString_Correctly() {
         // Arrange
         var category = new Category { Id = 10, Title = "Tech News" };
 
@@ -74,11 +69,9 @@ public class CategoryTests
     }
 
     [Fact]
-    public void CategoryCreateRequest_Should_Serialize_Correctly()
-    {
+    public void CategoryCreateRequest_Should_Serialize_Correctly() {
         // Arrange
-        var request = new CategoryCreateRequest
-        {
+        var request = new CategoryCreateRequest {
             Title = "New Category",
             HideGlobally = true
         };
@@ -94,11 +87,9 @@ public class CategoryTests
     }
 
     [Fact]
-    public void CategoryUpdateRequest_Should_Handle_Nullable_Properties()
-    {
+    public void CategoryUpdateRequest_Should_Handle_Nullable_Properties() {
         // Arrange
-        var request = new CategoryUpdateRequest
-        {
+        var request = new CategoryUpdateRequest {
             Title = "Updated Title",
             HideGlobally = null
         };

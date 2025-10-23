@@ -1,7 +1,6 @@
 namespace Oire.NetFlux.Tests.Fixtures;
 
-public static class TestConstants
-{
+public static class TestConstants {
     public const string BaseUrl = "https://miniflux.example.com";
     public const string ApiKey = "test-api-key-12345";
     public const string Username = "testuser";

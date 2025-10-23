@@ -46,9 +46,9 @@ internal class MinifluxHttpClient: IDisposable {
         };
 
         ConfigureHeaders();
-        
-        _logger.LogDebug("MinifluxHttpClient initialized with endpoint: {Endpoint}, authentication: {AuthType}", 
-            endpoint, 
+
+        _logger.LogDebug("MinifluxHttpClient initialized with endpoint: {Endpoint}, authentication: {AuthType}",
+            endpoint,
             !string.IsNullOrEmpty(_apiKey) ? "API Key" : "Basic Auth");
     }
 
@@ -138,7 +138,7 @@ internal class MinifluxHttpClient: IDisposable {
         var errorMessage = TryParseErrorMessage(errorContent);
 
         _logger.LogError("HTTP request failed with status {StatusCode}: {Error}", (int)response.StatusCode, errorMessage);
-        
+
         throw response.StatusCode switch {
             HttpStatusCode.Unauthorized => new MinifluxAuthenticationException(errorMessage ?? "Unauthorized"),
             HttpStatusCode.Forbidden => new MinifluxForbiddenException(errorMessage ?? "Forbidden"),

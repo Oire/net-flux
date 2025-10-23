@@ -6,16 +6,13 @@ using Oire.NetFlux.Tests.Fixtures;
 
 namespace Oire.NetFlux.Tests.Models;
 
-public class EntryTests
-{
-    private readonly JsonSerializerOptions _jsonOptions = new()
-    {
+public class EntryTests {
+    private readonly JsonSerializerOptions _jsonOptions = new() {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     [Fact]
-    public void Should_Serialize_Entry_To_Json()
-    {
+    public void Should_Serialize_Entry_To_Json() {
         // Arrange
         var entry = TestDataFactory.CreateEntry();
 
@@ -46,8 +43,7 @@ public class EntryTests
     }
 
     [Fact]
-    public void Should_Deserialize_Entry_From_Json()
-    {
+    public void Should_Deserialize_Entry_From_Json() {
         // Arrange
         var json = """
         {
@@ -143,8 +139,7 @@ public class EntryTests
     [InlineData(EntryStatus.Unread, "unread")]
     [InlineData(EntryStatus.Read, "read")]
     [InlineData(EntryStatus.Removed, "removed")]
-    public void Should_Serialize_EntryStatus_As_String(EntryStatus status, string expected)
-    {
+    public void Should_Serialize_EntryStatus_As_String(EntryStatus status, string expected) {
         // Arrange
         var entry = new Entry { Status = status };
 
@@ -159,8 +154,7 @@ public class EntryTests
     [InlineData("unread", EntryStatus.Unread)]
     [InlineData("read", EntryStatus.Read)]
     [InlineData("removed", EntryStatus.Removed)]
-    public void Should_Deserialize_EntryStatus_From_String(string statusJson, EntryStatus expected)
-    {
+    public void Should_Deserialize_EntryStatus_From_String(string statusJson, EntryStatus expected) {
         // Arrange
         var json = $"{{\"status\":\"{statusJson}\"}}";
 
@@ -173,11 +167,9 @@ public class EntryTests
     }
 
     [Fact]
-    public void EntryFilter_Should_Serialize_With_Correct_Property_Names()
-    {
+    public void EntryFilter_Should_Serialize_With_Correct_Property_Names() {
         // Arrange
-        var filter = new EntryFilter
-        {
+        var filter = new EntryFilter {
             Status = EntryStatus.Unread,
             Offset = 10,
             Limit = 50,
@@ -205,8 +197,7 @@ public class EntryTests
     }
 
     [Fact]
-    public void EntryResultSet_Should_Deserialize_Correctly()
-    {
+    public void EntryResultSet_Should_Deserialize_Correctly() {
         // Arrange
         var json = """
         {
@@ -271,11 +262,9 @@ public class EntryTests
     }
 
     [Fact]
-    public void EntryUpdateRequest_Should_Serialize_Correctly()
-    {
+    public void EntryUpdateRequest_Should_Serialize_Correctly() {
         // Arrange
-        var request = new EntryUpdateRequest
-        {
+        var request = new EntryUpdateRequest {
             Title = "Updated Title",
             Content = "<p>Updated content</p>"
         };
@@ -291,11 +280,9 @@ public class EntryTests
     }
 
     [Fact]
-    public void EnclosureUpdateRequest_Should_Serialize_Correctly()
-    {
+    public void EnclosureUpdateRequest_Should_Serialize_Correctly() {
         // Arrange
-        var request = new EnclosureUpdateRequest
-        {
+        var request = new EnclosureUpdateRequest {
             MediaProgression = 42
         };
 
