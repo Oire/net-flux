@@ -12,8 +12,9 @@ using Oire.NetFlux.Models;
 
 namespace Oire.NetFlux.Http;
 
-internal class MinifluxHttpClient: IDisposable {
+public class MinifluxHttpClient: IDisposable {
     private readonly HttpClient _httpClient;
+    private readonly bool _ownsHttpClient;
     private readonly string _baseUrl;
     private readonly string? _username;
     private readonly string? _password;
@@ -25,7 +26,7 @@ internal class MinifluxHttpClient: IDisposable {
     private const string UserAgent = "NetFlux Client Library";
     private const int DefaultTimeoutSeconds = 80;
 
-    public MinifluxHttpClient(string endpoint, string? username = null, string? password = null, string? apiKey = null, TimeSpan? timeout = null, ILogger<MinifluxClient>? logger = null) {
+    public MinifluxHttpClient(string endpoint, string? username = null, string? password = null, string? apiKey = null, TimeSpan? timeout = null, ILogger<MinifluxClient>? logger = null, HttpClient? httpClient = null) {
         if (string.IsNullOrWhiteSpace(endpoint)) {
             throw new MinifluxConfigurationException("Endpoint cannot be empty.");
         }
@@ -36,9 +37,15 @@ internal class MinifluxHttpClient: IDisposable {
         _apiKey = apiKey;
         _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<MinifluxClient>.Instance;
 
-        _httpClient = new HttpClient {
-            Timeout = timeout ?? TimeSpan.FromSeconds(DefaultTimeoutSeconds)
-        };
+        if (httpClient is not null) {
+            _httpClient = httpClient;
+            _ownsHttpClient = false;
+        } else {
+            _httpClient = new HttpClient {
+                Timeout = timeout ?? TimeSpan.FromSeconds(DefaultTimeoutSeconds)
+            };
+            _ownsHttpClient = true;
+        }
 
         _jsonOptions = new JsonSerializerOptions {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -49,7 +56,7 @@ internal class MinifluxHttpClient: IDisposable {
 
         _logger.LogDebug("MinifluxHttpClient initialized with endpoint: {Endpoint}, authentication: {AuthType}",
             endpoint,
-            !string.IsNullOrEmpty(_apiKey) ? "API Key" : "Basic Auth");
+            _apiKey is not null and not "" ? "API Key" : "Basic Auth");
     }
 
     private void ConfigureHeaders() {
@@ -57,9 +64,9 @@ internal class MinifluxHttpClient: IDisposable {
         _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        if (!string.IsNullOrEmpty(_apiKey)) {
+        if (_apiKey is not null and not "") {
             _httpClient.DefaultRequestHeaders.Add("X-Auth-Token", _apiKey);
-        } else if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password)) {
+        } else if (_username is not null and not "" && _password is not null and not "") {
             var authBytes = Encoding.UTF8.GetBytes($"{_username}:{_password}");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authBytes));
         }
@@ -192,7 +199,7 @@ internal class MinifluxHttpClient: IDisposable {
 
     protected virtual void Dispose(bool disposing) {
         if (!_disposed) {
-            if (disposing) {
+            if (disposing && _ownsHttpClient) {
                 _httpClient?.Dispose();
             }
             _disposed = true;

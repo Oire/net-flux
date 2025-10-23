@@ -79,7 +79,9 @@ public class HttpMessageHandlerMock: HttpMessageHandler {
     }
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
-        _capturedRequests.Add(request);
+        // Clone the request to prevent disposal issues
+        var clonedRequest = await CloneHttpRequestMessageAsync(request);
+        _capturedRequests.Add(clonedRequest);
 
         while (_responses.Count > 0) {
             var (matcher, response) = _responses.Dequeue();
@@ -89,6 +91,34 @@ public class HttpMessageHandlerMock: HttpMessageHandler {
         }
 
         throw new InvalidOperationException($"No response setup found for {request.Method} {request.RequestUri}");
+    }
+
+    private async Task<HttpRequestMessage> CloneHttpRequestMessageAsync(HttpRequestMessage request) {
+        var clone = new HttpRequestMessage(request.Method, request.RequestUri);
+
+        // Copy headers
+        foreach (var header in request.Headers) {
+            clone.Headers.TryAddWithoutValidation(header.Key, header.Value);
+        }
+
+        // Clone content if present
+        if (request.Content is not null) {
+            var contentBytes = await request.Content.ReadAsByteArrayAsync();
+            clone.Content = new ByteArrayContent(contentBytes);
+
+            // Copy content headers
+            foreach (var header in request.Content.Headers) {
+                clone.Content.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            }
+        }
+
+        // Copy other properties
+        clone.Version = request.Version;
+        foreach (var prop in request.Options) {
+            clone.Options.Set(new HttpRequestOptionsKey<object?>(prop.Key), prop.Value);
+        }
+
+        return clone;
     }
 
     protected override void Dispose(bool disposing) {
