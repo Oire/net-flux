@@ -11,6 +11,7 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsNotAsErrors>NU1701</WarningsNotAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     
     <!-- Package properties -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

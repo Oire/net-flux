@@ -13,6 +13,10 @@ using Oire.NetFlux.Models;
 
 namespace Oire.NetFlux.Http;
 
+/// <summary>
+/// Provides HTTP client functionality for communicating with the Miniflux API.
+/// Handles authentication, request/response serialization, error handling, and proper resource disposal.
+/// </summary>
 public class MinifluxHttpClient: IDisposable {
     private readonly HttpClient _httpClient;
     private readonly bool _ownsHttpClient;
@@ -27,6 +31,17 @@ public class MinifluxHttpClient: IDisposable {
     private const string UserAgent = "NetFlux Client Library";
     private const int DefaultTimeoutSeconds = 80;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MinifluxHttpClient"/> class.
+    /// </summary>
+    /// <param name="endpoint">The base URL of the Miniflux server.</param>
+    /// <param name="username">The username for basic authentication (optional if using API key).</param>
+    /// <param name="password">The password for basic authentication (optional if using API key).</param>
+    /// <param name="apiKey">The API key for token-based authentication (optional if using basic auth).</param>
+    /// <param name="timeout">The HTTP client timeout. Defaults to 80 seconds if not specified.</param>
+    /// <param name="logger">Optional logger for HTTP operations.</param>
+    /// <param name="httpClient">Optional existing HttpClient instance to use instead of creating a new one.</param>
+    /// <exception cref="MinifluxConfigurationException">Thrown when the endpoint is null or empty.</exception>
     public MinifluxHttpClient(string endpoint, string? username = null, string? password = null, string? apiKey = null, TimeSpan? timeout = null, ILogger<MinifluxClient>? logger = null, HttpClient? httpClient = null) {
         if (string.IsNullOrWhiteSpace(endpoint)) {
             throw new MinifluxConfigurationException("Endpoint cannot be empty.");
@@ -71,6 +86,13 @@ public class MinifluxHttpClient: IDisposable {
         }
     }
 
+    /// <summary>
+    /// Sends an HTTP GET request to the specified path and deserializes the response to the specified type.
+    /// </summary>
+    /// <typeparam name="T">The type to deserialize the response to.</typeparam>
+    /// <param name="path">The API endpoint path relative to the base URL.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>The deserialized response object, or null if the response is empty.</returns>
     public async Task<T?> GetAsync<T>(string path, CancellationToken cancellationToken = default) {
         _logger.LogGetRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Get, path, null, cancellationToken);
@@ -78,6 +100,14 @@ public class MinifluxHttpClient: IDisposable {
         return await DeserializeResponseAsync<T>(response, cancellationToken);
     }
 
+    /// <summary>
+    /// Sends an HTTP POST request to the specified path with the provided data and deserializes the response to the specified type.
+    /// </summary>
+    /// <typeparam name="T">The type to deserialize the response to.</typeparam>
+    /// <param name="path">The API endpoint path relative to the base URL.</param>
+    /// <param name="data">The data to serialize and send in the request body.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>The deserialized response object, or null if the response is empty.</returns>
     public async Task<T?> PostAsync<T>(string path, object? data, CancellationToken cancellationToken = default) {
         _logger.LogPostRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Post, path, data, cancellationToken);
@@ -85,6 +115,14 @@ public class MinifluxHttpClient: IDisposable {
         return await DeserializeResponseAsync<T>(response, cancellationToken);
     }
 
+    /// <summary>
+    /// Sends an HTTP PUT request to the specified path with the provided data and deserializes the response to the specified type.
+    /// </summary>
+    /// <typeparam name="T">The type to deserialize the response to.</typeparam>
+    /// <param name="path">The API endpoint path relative to the base URL.</param>
+    /// <param name="data">The data to serialize and send in the request body.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>The deserialized response object, or null if the response is empty.</returns>
     public async Task<T?> PutAsync<T>(string path, object? data, CancellationToken cancellationToken = default) {
         _logger.LogPutRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Put, path, data, cancellationToken);
@@ -92,18 +130,35 @@ public class MinifluxHttpClient: IDisposable {
         return await DeserializeResponseAsync<T>(response, cancellationToken);
     }
 
+    /// <summary>
+    /// Sends an HTTP DELETE request to the specified path.
+    /// </summary>
+    /// <param name="path">The API endpoint path relative to the base URL.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
     public async Task DeleteAsync(string path, CancellationToken cancellationToken = default) {
         _logger.LogDeleteRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Delete, path, null, cancellationToken);
         // DELETE operations typically don't return content
     }
 
+    /// <summary>
+    /// Sends an HTTP GET request to the specified path and returns the response as a byte array.
+    /// </summary>
+    /// <param name="path">The API endpoint path relative to the base URL.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+    /// <returns>The response content as a byte array.</returns>
     public async Task<byte[]> GetBytesAsync(string path, CancellationToken cancellationToken = default) {
         using var response = await SendRequestAsync(HttpMethod.Get, path, null, cancellationToken);
 
         return await response.Content.ReadAsByteArrayAsync(cancellationToken);
     }
 
+    /// <summary>
+    /// Sends an HTTP POST request to the specified path with a file stream as the request body.
+    /// </summary>
+    /// <param name="path">The API endpoint path relative to the base URL.</param>
+    /// <param name="fileStream">The file stream to send in the request body.</param>
+    /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
     public async Task PostFileAsync(string path, Stream fileStream, CancellationToken cancellationToken = default) {
         var url = $"{_baseUrl}{path}";
         using var content = new StreamContent(fileStream);
@@ -191,11 +246,18 @@ public class MinifluxHttpClient: IDisposable {
         return JsonSerializer.Deserialize<T>(content, _jsonOptions);
     }
 
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
     public void Dispose() {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Releases the unmanaged resources used by the <see cref="MinifluxHttpClient"/> and optionally releases the managed resources.
+    /// </summary>
+    /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
     protected virtual void Dispose(bool disposing) {
         if (!_disposed) {
             if (disposing && _ownsHttpClient) {

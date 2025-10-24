@@ -5,7 +5,7 @@
       "Bash(dotnet test:*)",
       "Bash(dotnet restore:*)",
       "Bash(find:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
       "Bash(findstr:*)"
     ],
     "deny": []

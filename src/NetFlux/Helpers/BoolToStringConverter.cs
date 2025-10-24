@@ -3,7 +3,18 @@ using System.Text.Json.Serialization;
 
 namespace Oire.NetFlux.Helpers;
 
+/// <summary>
+/// A JSON converter that handles boolean to string conversions for the Miniflux API.
+/// Converts boolean values to "1"/"0" strings and vice versa.
+/// </summary>
 public class BoolToStringConverter: JsonConverter<bool?> {
+    /// <summary>
+    /// Reads and converts a JSON value to a nullable boolean.
+    /// </summary>
+    /// <param name="reader">The JSON reader.</param>
+    /// <param name="typeToConvert">The type to convert to.</param>
+    /// <param name="options">The serializer options.</param>
+    /// <returns>The converted boolean value, or null if the JSON value is null.</returns>
     public override bool? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
         if (reader.TokenType == JsonTokenType.Null) {
             return null;
@@ -29,6 +40,12 @@ public class BoolToStringConverter: JsonConverter<bool?> {
         return null;
     }
 
+    /// <summary>
+    /// Writes a nullable boolean value as a JSON string.
+    /// </summary>
+    /// <param name="writer">The JSON writer.</param>
+    /// <param name="value">The boolean value to write.</param>
+    /// <param name="options">The serializer options.</param>
     public override void Write(Utf8JsonWriter writer, bool? value, JsonSerializerOptions options) {
         if (value is null) {
             writer.WriteNullValue();
