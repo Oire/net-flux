@@ -8,7 +8,7 @@ public class HttpMessageHandlerMock: HttpMessageHandler {
     private static readonly JsonSerializerOptions JsonOptions = new() {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
-    
+
     private readonly Queue<(Func<HttpRequestMessage, bool> matcher, HttpResponseMessage response)> _responses = new();
     private readonly List<HttpRequestMessage> _capturedRequests = new();
 
@@ -19,9 +19,7 @@ public class HttpMessageHandlerMock: HttpMessageHandler {
     }
 
     public void SetupJsonResponse<T>(T content, HttpStatusCode statusCode = HttpStatusCode.OK, Func<HttpRequestMessage, bool>? matcher = null) {
-        var json = JsonSerializer.Serialize(content, new JsonSerializerOptions {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
+        var json = JsonSerializer.Serialize(content, JsonOptions);
 
         var response = new HttpResponseMessage(statusCode) {
             Content = new StringContent(json, Encoding.UTF8, "application/json")
@@ -77,9 +75,7 @@ public class HttpMessageHandlerMock: HttpMessageHandler {
             return default;
 
         var json = await request.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        });
+        return JsonSerializer.Deserialize<T>(json, JsonOptions);
     }
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
