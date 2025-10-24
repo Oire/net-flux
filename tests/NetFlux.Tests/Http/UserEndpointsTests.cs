@@ -43,7 +43,7 @@ public class UserEndpointsTests: IDisposable {
         user.Username.Should().Be(expectedUser.Username);
 
         // Verify authentication header
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Headers.Should().ContainKey("X-Auth-Token");
         request.Headers.GetValues("X-Auth-Token").Should().ContainSingle(ApiKey);
     }
@@ -150,7 +150,7 @@ public class UserEndpointsTests: IDisposable {
 
         // Assert
         _httpMock.CapturedRequests.Should().HaveCount(1);
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Method.Should().Be(HttpMethod.Delete);
         request.RequestUri!.AbsolutePath.Should().Be($"/v1/users/{userId}");
     }
@@ -167,7 +167,7 @@ public class UserEndpointsTests: IDisposable {
 
         // Assert
         _httpMock.CapturedRequests.Should().HaveCount(1);
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Method.Should().Be(HttpMethod.Put);
         request.RequestUri!.AbsolutePath.Should().Be($"/v1/users/{userId}/mark-all-as-read");
     }
@@ -181,7 +181,7 @@ public class UserEndpointsTests: IDisposable {
         _ = await _client.GetAsync<User>("/v1/me");
 
         // Assert
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Headers.Should().ContainKey("X-Auth-Token");
         request.Headers.GetValues("X-Auth-Token").Should().ContainSingle(ApiKey);
         request.Headers.Should().ContainKey("User-Agent");
@@ -201,7 +201,7 @@ public class UserEndpointsTests: IDisposable {
         _ = await authClient.GetAsync<User>("/v1/me");
 
         // Assert
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Headers.Should().ContainKey("Authorization");
         var authHeader = request.Headers.GetValues("Authorization").First();
         authHeader.Should().StartWith("Basic ");

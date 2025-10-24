@@ -128,7 +128,7 @@ public class FeedEndpointsTests: IDisposable {
 
         // Assert
         _httpMock.CapturedRequests.Should().HaveCount(1);
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Method.Should().Be(HttpMethod.Delete);
         request.RequestUri!.AbsolutePath.Should().Be($"/v1/feeds/{feedId}");
     }
@@ -145,7 +145,7 @@ public class FeedEndpointsTests: IDisposable {
 
         // Assert
         _httpMock.CapturedRequests.Should().HaveCount(1);
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Method.Should().Be(HttpMethod.Put);
         request.RequestUri!.AbsolutePath.Should().Be($"/v1/feeds/{feedId}/refresh");
     }
@@ -162,7 +162,7 @@ public class FeedEndpointsTests: IDisposable {
 
         // Assert
         _httpMock.CapturedRequests.Should().HaveCount(1);
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Method.Should().Be(HttpMethod.Put);
         request.RequestUri!.AbsolutePath.Should().Be($"/v1/feeds/{feedId}/mark-all-as-read");
     }

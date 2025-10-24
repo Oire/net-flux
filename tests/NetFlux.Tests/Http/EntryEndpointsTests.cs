@@ -83,7 +83,7 @@ public class EntryEndpointsTests: IDisposable {
         result!.Total.Should().Be(5);
 
         // Verify URL was constructed correctly
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.RequestUri!.Query.Should().Contain("status=unread");
         request.RequestUri.Query.Should().Contain("limit=50");
         request.RequestUri.Query.Should().Contain("starred=1");
@@ -145,7 +145,7 @@ public class EntryEndpointsTests: IDisposable {
 
         // Assert
         _httpMock.CapturedRequests.Should().HaveCount(1);
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Method.Should().Be(HttpMethod.Put);
         request.RequestUri!.AbsolutePath.Should().Be($"/v1/entries/{entryId}/bookmark");
     }
@@ -192,7 +192,7 @@ public class EntryEndpointsTests: IDisposable {
 
         // Assert
         _httpMock.CapturedRequests.Should().HaveCount(1);
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Method.Should().Be(HttpMethod.Post);
         request.RequestUri!.AbsolutePath.Should().Contain($"/v1/entries/{entryId}/save/");
     }

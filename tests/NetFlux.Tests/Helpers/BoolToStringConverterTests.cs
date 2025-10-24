@@ -124,11 +124,11 @@ public class BoolToStringConverterTests {
         result!.Value.Should().BeNull();
     }
 
-    private class TestObject {
+    private sealed class TestObject {
         public bool? Value { get; set; }
     }
 
-    private class NonNullableTestObject {
+    private sealed class NonNullableTestObject {
         public bool Value { get; set; }
     }
 }

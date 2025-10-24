@@ -124,7 +124,7 @@ public class CategoryEndpointsTests: IDisposable {
 
         // Assert
         _httpMock.CapturedRequests.Should().HaveCount(1);
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Method.Should().Be(HttpMethod.Delete);
         request.RequestUri!.AbsolutePath.Should().Be($"/v1/categories/{categoryId}");
     }
@@ -164,7 +164,7 @@ public class CategoryEndpointsTests: IDisposable {
 
         // Assert
         _httpMock.CapturedRequests.Should().HaveCount(1);
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Method.Should().Be(HttpMethod.Put);
         request.RequestUri!.AbsolutePath.Should().Be($"/v1/categories/{categoryId}/mark-all-as-read");
     }
@@ -181,7 +181,7 @@ public class CategoryEndpointsTests: IDisposable {
 
         // Assert
         _httpMock.CapturedRequests.Should().HaveCount(1);
-        var request = _httpMock.CapturedRequests.First();
+        var request = _httpMock.CapturedRequests[0];
         request.Method.Should().Be(HttpMethod.Put);
         request.RequestUri!.AbsolutePath.Should().Be($"/v1/categories/{categoryId}/refresh");
     }

@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Oire.NetFlux.Exceptions;
+using Oire.NetFlux.Logging;
 using Oire.NetFlux.Models;
 
 namespace Oire.NetFlux.Http;
@@ -54,9 +55,7 @@ public class MinifluxHttpClient: IDisposable {
 
         ConfigureHeaders();
 
-        _logger.LogDebug("MinifluxHttpClient initialized with endpoint: {Endpoint}, authentication: {AuthType}",
-            endpoint,
-            _apiKey is not null and not "" ? "API Key" : "Basic Auth");
+        _logger.LogHttpClientInitialized(endpoint, _apiKey is not null and not "" ? "API Key" : "Basic Auth");
     }
 
     private void ConfigureHeaders() {
@@ -73,28 +72,28 @@ public class MinifluxHttpClient: IDisposable {
     }
 
     public async Task<T?> GetAsync<T>(string path, CancellationToken cancellationToken = default) {
-        _logger.LogDebug("GET request to {Path}", path);
+        _logger.LogGetRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Get, path, null, cancellationToken);
 
         return await DeserializeResponseAsync<T>(response, cancellationToken);
     }
 
     public async Task<T?> PostAsync<T>(string path, object? data, CancellationToken cancellationToken = default) {
-        _logger.LogDebug("POST request to {Path}", path);
+        _logger.LogPostRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Post, path, data, cancellationToken);
 
         return await DeserializeResponseAsync<T>(response, cancellationToken);
     }
 
     public async Task<T?> PutAsync<T>(string path, object? data, CancellationToken cancellationToken = default) {
-        _logger.LogDebug("PUT request to {Path}", path);
+        _logger.LogPutRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Put, path, data, cancellationToken);
 
         return await DeserializeResponseAsync<T>(response, cancellationToken);
     }
 
     public async Task DeleteAsync(string path, CancellationToken cancellationToken = default) {
-        _logger.LogDebug("DELETE request to {Path}", path);
+        _logger.LogDeleteRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Delete, path, null, cancellationToken);
         // DELETE operations typically don't return content
     }
@@ -130,7 +129,7 @@ public class MinifluxHttpClient: IDisposable {
         }
 
         var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        _logger.LogDebug("{Method} {Url} returned {StatusCode}", method, url, (int)response.StatusCode);
+        _logger.LogHttpResponse(method.ToString(), url, (int)response.StatusCode);
         await HandleResponseAsync(response, cancellationToken);
 
         return response;
@@ -144,7 +143,7 @@ public class MinifluxHttpClient: IDisposable {
         var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
         var errorMessage = TryParseErrorMessage(errorContent);
 
-        _logger.LogError("HTTP request failed with status {StatusCode}: {Error}", (int)response.StatusCode, errorMessage);
+        _logger.LogHttpError((int)response.StatusCode, errorMessage ?? "Unknown error");
 
         throw response.StatusCode switch {
             HttpStatusCode.Unauthorized => new MinifluxAuthenticationException(errorMessage ?? "Unauthorized"),
@@ -156,7 +155,7 @@ public class MinifluxHttpClient: IDisposable {
         };
     }
 
-    private string? TryParseErrorMessage(string content) {
+    private static string? TryParseErrorMessage(string content) {
         if (string.IsNullOrWhiteSpace(content)) {
             return null;
         }

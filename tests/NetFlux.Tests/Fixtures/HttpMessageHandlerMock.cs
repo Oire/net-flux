@@ -5,6 +5,10 @@ using System.Text.Json;
 namespace Oire.NetFlux.Tests.Fixtures;
 
 public class HttpMessageHandlerMock: HttpMessageHandler {
+    private static readonly JsonSerializerOptions JsonOptions = new() {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
+    
     private readonly Queue<(Func<HttpRequestMessage, bool> matcher, HttpResponseMessage response)> _responses = new();
     private readonly List<HttpRequestMessage> _capturedRequests = new();
 
@@ -59,7 +63,7 @@ public class HttpMessageHandlerMock: HttpMessageHandler {
     }
 
     public void VerifyNoOutstandingRequests() {
-        if (_responses.Any()) {
+        if (_responses.Count != 0) {
             throw new InvalidOperationException($"There are {_responses.Count} unused response setups.");
         }
     }
@@ -93,7 +97,7 @@ public class HttpMessageHandlerMock: HttpMessageHandler {
         throw new InvalidOperationException($"No response setup found for {request.Method} {request.RequestUri}");
     }
 
-    private async Task<HttpRequestMessage> CloneHttpRequestMessageAsync(HttpRequestMessage request) {
+    private static async Task<HttpRequestMessage> CloneHttpRequestMessageAsync(HttpRequestMessage request) {
         var clone = new HttpRequestMessage(request.Method, request.RequestUri);
 
         // Copy headers

@@ -10,6 +10,7 @@ public class EntryTests {
     private readonly JsonSerializerOptions _jsonOptions = new() {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
+    private static readonly string[] expectation = new[] { "technology", "programming" };
 
     [Fact]
     public void Should_Serialize_Entry_To_Json() {
@@ -129,7 +130,7 @@ public class EntryTests {
         entry.Feed.Title.Should().Be("Example Blog");
         entry.Feed.Category.Should().NotBeNull();
         entry.Feed.Category!.Title.Should().Be("Tech");
-        entry.Tags.Should().BeEquivalentTo(new[] { "technology", "programming" });
+        entry.Tags.Should().BeEquivalentTo(expectation);
         entry.Enclosures.Should().HaveCount(1);
         entry.Enclosures[0].MimeType.Should().Be("image/jpeg");
         entry.Enclosures[0].Size.Should().Be(204800);

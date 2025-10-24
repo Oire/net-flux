@@ -16,7 +16,7 @@ public class CamelCaseJsonStringEnumConverter: JsonConverterFactory {
     }
 }
 
-internal class CamelCaseEnumConverter<T>: JsonConverter<T> where T : struct, Enum {
+internal sealed class CamelCaseEnumConverter<T>: JsonConverter<T> where T : struct, Enum {
     public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
         var stringValue = reader.GetString();
         if (string.IsNullOrEmpty(stringValue))
