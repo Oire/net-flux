@@ -13,6 +13,10 @@ using Oire.NetFlux.Models;
 
 namespace Oire.NetFlux;
 
+/// <summary>
+/// Provides a client for interacting with the Miniflux RSS reader API.
+/// Supports both basic authentication (username/password) and API key authentication.
+/// </summary>
 public class MinifluxClient: IDisposable {
     private readonly MinifluxHttpClient _httpClient;
     private readonly ILogger<MinifluxClient> _logger;
@@ -585,11 +589,18 @@ public class MinifluxClient: IDisposable {
 
     #region IDisposable
 
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
     public void Dispose() {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Releases the unmanaged resources used by the <see cref="MinifluxClient"/> and optionally releases the managed resources.
+    /// </summary>
+    /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
     protected virtual void Dispose(bool disposing) {
         if (!_disposed) {
             if (disposing) {
