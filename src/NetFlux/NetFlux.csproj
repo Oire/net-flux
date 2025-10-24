@@ -6,6 +6,12 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Oire.NetFlux</RootNamespace>
     
+    <!-- Code analysis -->
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU1701</WarningsNotAsErrors>
+    
     <!-- Package properties -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Oire.NetFlux</PackageId>
@@ -26,6 +32,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
     <PackageReference Include="System.Text.Json" Version="9.0.9" />
+    
+    <!-- Code analyzers -->
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

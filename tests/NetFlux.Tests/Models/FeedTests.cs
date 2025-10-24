@@ -5,16 +5,13 @@ using Oire.NetFlux.Tests.Fixtures;
 
 namespace Oire.NetFlux.Tests.Models;
 
-public class FeedTests
-{
-    private readonly JsonSerializerOptions _jsonOptions = new()
-    {
+public class FeedTests {
+    private readonly JsonSerializerOptions _jsonOptions = new() {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     [Fact]
-    public void Should_Serialize_Feed_To_Json()
-    {
+    public void Should_Serialize_Feed_To_Json() {
         // Arrange
         var feed = TestDataFactory.CreateFeed();
 
@@ -39,8 +36,7 @@ public class FeedTests
     }
 
     [Fact]
-    public void Should_Deserialize_Feed_From_Json()
-    {
+    public void Should_Deserialize_Feed_From_Json() {
         // Arrange
         var json = """
         {
@@ -122,11 +118,9 @@ public class FeedTests
     }
 
     [Fact]
-    public void FeedCreateRequest_Should_Serialize_Correctly()
-    {
+    public void FeedCreateRequest_Should_Serialize_Correctly() {
         // Arrange
-        var request = new FeedCreateRequest
-        {
+        var request = new FeedCreateRequest {
             FeedUrl = "https://example.com/feed.rss",
             CategoryId = 15,
             Crawler = true,
@@ -150,11 +144,9 @@ public class FeedTests
     }
 
     [Fact]
-    public void FeedUpdateRequest_Should_Handle_Nullable_Properties()
-    {
+    public void FeedUpdateRequest_Should_Handle_Nullable_Properties() {
         // Arrange
-        var request = new FeedUpdateRequest
-        {
+        var request = new FeedUpdateRequest {
             Title = "Updated Feed Title",
             CategoryId = 20,
             Disabled = false,
@@ -174,8 +166,7 @@ public class FeedTests
     }
 
     [Fact]
-    public void FeedIcon_Should_Serialize_And_Deserialize_Correctly()
-    {
+    public void FeedIcon_Should_Serialize_And_Deserialize_Correctly() {
         // Arrange
         var icon = TestDataFactory.CreateFeedIcon();
 
@@ -191,8 +182,7 @@ public class FeedTests
     }
 
     [Fact]
-    public void FeedCounters_Should_Serialize_And_Deserialize_Correctly()
-    {
+    public void FeedCounters_Should_Serialize_And_Deserialize_Correctly() {
         // Arrange
         var counters = TestDataFactory.CreateFeedCounters();
 

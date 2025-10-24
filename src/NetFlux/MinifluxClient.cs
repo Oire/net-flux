@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Oire.NetFlux.Exceptions;
 using Oire.NetFlux.Helpers;
 using Oire.NetFlux.Http;
+using Oire.NetFlux.Logging;
 using Oire.NetFlux.Models;
 
 namespace Oire.NetFlux;
@@ -66,13 +67,13 @@ public class MinifluxClient: IDisposable {
     /// </summary>
     public async Task<bool> HealthcheckAsync(CancellationToken cancellationToken = default) {
         try {
-            _logger.LogDebug("Performing healthcheck");
+            _logger.LogHealthcheck();
             var response = await _httpClient.GetBytesAsync("/healthcheck", cancellationToken);
             var isHealthy = Encoding.UTF8.GetString(response) == "OK";
-            _logger.LogInformation("Healthcheck result: {IsHealthy}", isHealthy);
+            _logger.LogHealthcheckResult(isHealthy);
             return isHealthy;
         } catch (Exception ex) {
-            _logger.LogWarning(ex, "Healthcheck failed");
+            _logger.LogHealthcheckFailed(ex);
             return false;
         }
     }
@@ -93,7 +94,7 @@ public class MinifluxClient: IDisposable {
     /// Gets the currently authenticated user.
     /// </summary>
     public async Task<User> GetCurrentUserAsync(CancellationToken cancellationToken = default) {
-        _logger.LogDebug("Retrieving current user");
+        _logger.LogRetrievingCurrentUser();
         return await _httpClient.GetAsync<User>("/v1/me", cancellationToken)
             ?? throw new MinifluxException("Failed to retrieve current user");
     }
@@ -127,7 +128,7 @@ public class MinifluxClient: IDisposable {
     /// </summary>
     public async Task<User> CreateUserAsync(UserCreateRequest request, CancellationToken cancellationToken = default) {
         ArgumentNullException.ThrowIfNull(request);
-        _logger.LogInformation("Creating new user: {Username}", request.Username);
+        _logger.LogCreatingUser(request.Username);
         return await _httpClient.PostAsync<User>("/v1/users", request, cancellationToken)
             ?? throw new MinifluxException("Failed to create user");
     }
@@ -145,7 +146,7 @@ public class MinifluxClient: IDisposable {
     /// Deletes a user.
     /// </summary>
     public async Task DeleteUserAsync(long userId, CancellationToken cancellationToken = default) {
-        _logger.LogWarning("Deleting user with ID: {UserId}", userId);
+        _logger.LogDeletingUser(userId);
         await _httpClient.DeleteAsync($"/v1/users/{userId}", cancellationToken);
     }
 
@@ -153,7 +154,7 @@ public class MinifluxClient: IDisposable {
     /// Marks all entries as read for a user.
     /// </summary>
     public async Task MarkAllAsReadAsync(long userId, CancellationToken cancellationToken = default) {
-        _logger.LogInformation("Marking all entries as read for user: {UserId}", userId);
+        _logger.LogMarkingAllAsRead(userId);
         await _httpClient.PutAsync<object>($"/v1/users/{userId}/mark-all-as-read", null, cancellationToken);
     }
 
@@ -270,10 +271,10 @@ public class MinifluxClient: IDisposable {
     /// </summary>
     public async Task<long> CreateFeedAsync(FeedCreateRequest request, CancellationToken cancellationToken = default) {
         ArgumentNullException.ThrowIfNull(request);
-        _logger.LogInformation("Creating new feed: {FeedUrl}", request.FeedUrl);
+        _logger.LogCreatingFeed(request.FeedUrl);
         var response = await _httpClient.PostAsync<Dictionary<string, long>>("/v1/feeds", request, cancellationToken);
         var feedId = response?["feed_id"] ?? throw new MinifluxException("Failed to create feed");
-        _logger.LogInformation("Feed created successfully with ID: {FeedId}", feedId);
+        _logger.LogFeedCreated(feedId);
         return feedId;
     }
 
@@ -311,7 +312,7 @@ public class MinifluxClient: IDisposable {
     /// Refreshes all feeds.
     /// </summary>
     public async Task RefreshAllFeedsAsync(CancellationToken cancellationToken = default) {
-        _logger.LogInformation("Refreshing all feeds");
+        _logger.LogRefreshingAllFeeds();
         await _httpClient.PutAsync<object>("/v1/feeds/refresh", null, cancellationToken);
     }
 
@@ -392,7 +393,7 @@ public class MinifluxClient: IDisposable {
     public async Task UpdateEntriesStatusAsync(IEnumerable<long> entryIds, EntryStatus status, CancellationToken cancellationToken = default) {
         var entryIdList = entryIds.ToList();
         var statusString = status.ToString().ToLowerInvariant();
-        _logger.LogInformation("Updating {Count} entries to status: {Status}", entryIdList.Count, statusString);
+        _logger.LogUpdatingEntriesStatus(entryIdList.Count, statusString);
         var payload = new { entry_ids = entryIdList, status = statusString };
         await _httpClient.PutAsync<object>("/v1/entries", payload, cancellationToken);
     }
@@ -432,7 +433,7 @@ public class MinifluxClient: IDisposable {
     /// Flushes history (removes all read entries).
     /// </summary>
     public async Task FlushHistoryAsync(CancellationToken cancellationToken = default) {
-        _logger.LogWarning("Flushing history - removing all read entries");
+        _logger.LogFlushingHistory();
         await _httpClient.PutAsync<object>("/v1/flush-history", null, cancellationToken);
     }
 
@@ -462,9 +463,9 @@ public class MinifluxClient: IDisposable {
     /// </summary>
     public async Task ImportOpmlAsync(Stream opmlStream, CancellationToken cancellationToken = default) {
         ArgumentNullException.ThrowIfNull(opmlStream);
-        _logger.LogInformation("Importing OPML file");
+        _logger.LogImportingOpmlFile();
         await _httpClient.PostFileAsync("/v1/import", opmlStream, cancellationToken);
-        _logger.LogInformation("OPML import completed");
+        _logger.LogOpmlImportCompleted();
     }
 
     #endregion

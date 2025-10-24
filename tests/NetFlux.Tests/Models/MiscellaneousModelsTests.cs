@@ -5,16 +5,13 @@ using Oire.NetFlux.Tests.Fixtures;
 
 namespace Oire.NetFlux.Tests.Models;
 
-public class MiscellaneousModelsTests
-{
-    private readonly JsonSerializerOptions _jsonOptions = new()
-    {
+public class MiscellaneousModelsTests {
+    private readonly JsonSerializerOptions _jsonOptions = new() {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
     [Fact]
-    public void ApiKey_Should_Serialize_And_Deserialize_Correctly()
-    {
+    public void ApiKey_Should_Serialize_And_Deserialize_Correctly() {
         // Arrange
         var apiKey = TestDataFactory.CreateApiKey();
 
@@ -33,11 +30,9 @@ public class MiscellaneousModelsTests
     }
 
     [Fact]
-    public void ApiKeyCreateRequest_Should_Serialize_Correctly()
-    {
+    public void ApiKeyCreateRequest_Should_Serialize_Correctly() {
         // Arrange
-        var request = new ApiKeyCreateRequest
-        {
+        var request = new ApiKeyCreateRequest {
             Description = "Mobile App API Key"
         };
 
@@ -51,8 +46,7 @@ public class MiscellaneousModelsTests
     }
 
     [Fact]
-    public void VersionInfo_Should_Deserialize_Correctly()
-    {
+    public void VersionInfo_Should_Deserialize_Correctly() {
         // Arrange
         var json = """
         {
@@ -81,8 +75,7 @@ public class MiscellaneousModelsTests
     }
 
     [Fact]
-    public void Subscription_Should_Serialize_And_Deserialize_Correctly()
-    {
+    public void Subscription_Should_Serialize_And_Deserialize_Correctly() {
         // Arrange
         var subscription = TestDataFactory.CreateSubscription();
 
@@ -98,11 +91,9 @@ public class MiscellaneousModelsTests
     }
 
     [Fact]
-    public void Should_Format_Subscription_ToString_Correctly()
-    {
+    public void Should_Format_Subscription_ToString_Correctly() {
         // Arrange
-        var subscription = new Subscription
-        {
+        var subscription = new Subscription {
             Title = "Tech News Feed",
             Url = "https://technews.com/feed.xml",
             Type = "rss"
@@ -116,8 +107,7 @@ public class MiscellaneousModelsTests
     }
 
     [Fact]
-    public void Enclosure_Should_Serialize_And_Deserialize_Correctly()
-    {
+    public void Enclosure_Should_Serialize_And_Deserialize_Correctly() {
         // Arrange
         var enclosure = TestDataFactory.CreateEnclosure();
 
@@ -137,8 +127,7 @@ public class MiscellaneousModelsTests
     }
 
     [Fact]
-    public void Enclosure_Should_Deserialize_From_Api_Response()
-    {
+    public void Enclosure_Should_Deserialize_From_Api_Response() {
         // Arrange
         var json = """
         {
@@ -167,8 +156,7 @@ public class MiscellaneousModelsTests
     }
 
     [Fact]
-    public void Multiple_Subscriptions_Should_Deserialize_As_List()
-    {
+    public void Multiple_Subscriptions_Should_Deserialize_As_List() {
         // Arrange
         var json = """
         [

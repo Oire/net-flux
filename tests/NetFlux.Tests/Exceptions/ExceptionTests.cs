@@ -3,11 +3,9 @@ using Oire.NetFlux.Exceptions;
 
 namespace Oire.NetFlux.Tests.Exceptions;
 
-public class ExceptionTests
-{
+public class ExceptionTests {
     [Fact]
-    public void MinifluxException_Should_Support_All_Constructors()
-    {
+    public void MinifluxException_Should_Support_All_Constructors() {
         // Parameterless constructor
         var ex1 = new MinifluxException();
         ex1.Should().BeOfType<MinifluxException>();
@@ -25,8 +23,7 @@ public class ExceptionTests
     }
 
     [Fact]
-    public void MinifluxAuthenticationException_Should_Have_Default_Message()
-    {
+    public void MinifluxAuthenticationException_Should_Have_Default_Message() {
         // Default constructor
         var ex1 = new MinifluxAuthenticationException();
         ex1.Message.Should().Be("Authentication failed. Please check your credentials.");
@@ -37,8 +34,7 @@ public class ExceptionTests
     }
 
     [Fact]
-    public void MinifluxBadRequestException_Should_Have_Default_Message()
-    {
+    public void MinifluxBadRequestException_Should_Have_Default_Message() {
         // Default constructor
         var ex1 = new MinifluxBadRequestException();
         ex1.Message.Should().Be("Bad request.");
@@ -49,8 +45,7 @@ public class ExceptionTests
     }
 
     [Fact]
-    public void MinifluxConfigurationException_Should_Have_Default_Message()
-    {
+    public void MinifluxConfigurationException_Should_Have_Default_Message() {
         // Default constructor
         var ex1 = new MinifluxConfigurationException();
         ex1.Message.Should().Be("Invalid configuration.");
@@ -61,8 +56,7 @@ public class ExceptionTests
     }
 
     [Fact]
-    public void MinifluxForbiddenException_Should_Have_Default_Message()
-    {
+    public void MinifluxForbiddenException_Should_Have_Default_Message() {
         // Default constructor
         var ex1 = new MinifluxForbiddenException();
         ex1.Message.Should().Be("Access forbidden.");
@@ -73,8 +67,7 @@ public class ExceptionTests
     }
 
     [Fact]
-    public void MinifluxNotFoundException_Should_Have_Default_Message()
-    {
+    public void MinifluxNotFoundException_Should_Have_Default_Message() {
         // Default constructor
         var ex1 = new MinifluxNotFoundException();
         ex1.Message.Should().Be("The requested resource was not found.");
@@ -85,8 +78,7 @@ public class ExceptionTests
     }
 
     [Fact]
-    public void MinifluxServerException_Should_Have_Default_Message()
-    {
+    public void MinifluxServerException_Should_Have_Default_Message() {
         // Default constructor
         var ex1 = new MinifluxServerException();
         ex1.Message.Should().Be("Internal server error.");
@@ -97,8 +89,7 @@ public class ExceptionTests
     }
 
     [Fact]
-    public void All_Exceptions_Should_Derive_From_MinifluxException()
-    {
+    public void All_Exceptions_Should_Derive_From_MinifluxException() {
         // Verify inheritance hierarchy
         var authEx = new MinifluxAuthenticationException();
         authEx.Should().BeAssignableTo<MinifluxException>();
@@ -120,8 +111,7 @@ public class ExceptionTests
     }
 
     [Fact]
-    public void Exception_Messages_Should_Be_Descriptive()
-    {
+    public void Exception_Messages_Should_Be_Descriptive() {
         // Verify default messages are helpful
         var exceptions = new Dictionary<Type, string>
         {
@@ -133,8 +123,7 @@ public class ExceptionTests
             { typeof(MinifluxServerException), "Internal server error." }
         };
 
-        foreach (var kvp in exceptions)
-        {
+        foreach (var kvp in exceptions) {
             var instance = Activator.CreateInstance(kvp.Key) as Exception;
             instance.Should().NotBeNull();
             instance!.Message.Should().Be(kvp.Value);

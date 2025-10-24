@@ -2,12 +2,9 @@ using Oire.NetFlux.Models;
 
 namespace Oire.NetFlux.Tests.Fixtures;
 
-public static class TestDataFactory
-{
-    public static User CreateUser(long id = TestConstants.UserId, string username = TestConstants.Username)
-    {
-        return new User
-        {
+public static class TestDataFactory {
+    public static User CreateUser(long id = TestConstants.UserId, string username = TestConstants.Username) {
+        return new User {
             Id = id,
             Username = username,
             IsAdmin = false,
@@ -38,10 +35,8 @@ public static class TestDataFactory
         };
     }
 
-    public static Category CreateCategory(long id = TestConstants.CategoryId, string title = "Technology")
-    {
-        return new Category
-        {
+    public static Category CreateCategory(long id = TestConstants.CategoryId, string title = "Technology") {
+        return new Category {
             Id = id,
             Title = title,
             UserId = TestConstants.UserId,
@@ -51,10 +46,8 @@ public static class TestDataFactory
         };
     }
 
-    public static Feed CreateFeed(long id = TestConstants.FeedId, long categoryId = TestConstants.CategoryId)
-    {
-        return new Feed
-        {
+    public static Feed CreateFeed(long id = TestConstants.FeedId, long categoryId = TestConstants.CategoryId) {
+        return new Feed {
             Id = id,
             UserId = TestConstants.UserId,
             FeedUrl = "https://example.com/feed.xml",
@@ -88,10 +81,8 @@ public static class TestDataFactory
         };
     }
 
-    public static Entry CreateEntry(long id = TestConstants.EntryId, long feedId = TestConstants.FeedId)
-    {
-        return new Entry
-        {
+    public static Entry CreateEntry(long id = TestConstants.EntryId, long feedId = TestConstants.FeedId) {
+        return new Entry {
             Id = id,
             PublishedAt = new DateTime(2024, 1, 1, 8, 0, 0, DateTimeKind.Utc),
             ChangedAt = new DateTime(2024, 1, 1, 8, 0, 0, DateTimeKind.Utc),
@@ -114,10 +105,8 @@ public static class TestDataFactory
         };
     }
 
-    public static ApiKey CreateApiKey(long id = TestConstants.ApiKeyId)
-    {
-        return new ApiKey
-        {
+    public static ApiKey CreateApiKey(long id = TestConstants.ApiKeyId) {
+        return new ApiKey {
             Id = id,
             UserId = TestConstants.UserId,
             Token = TestConstants.ApiKey,
@@ -127,10 +116,8 @@ public static class TestDataFactory
         };
     }
 
-    public static VersionInfo CreateVersionInfo()
-    {
-        return new VersionInfo
-        {
+    public static VersionInfo CreateVersionInfo() {
+        return new VersionInfo {
             Version = "2.1.0",
             Commit = "abc123def",
             BuildDate = "2024-01-01T00:00:00Z",
@@ -141,20 +128,16 @@ public static class TestDataFactory
         };
     }
 
-    public static Subscription CreateSubscription(string title = "Example Feed", string url = "https://example.com/feed.xml")
-    {
-        return new Subscription
-        {
+    public static Subscription CreateSubscription(string title = "Example Feed", string url = "https://example.com/feed.xml") {
+        return new Subscription {
             Title = title,
             Url = url,
             Type = "rss"
         };
     }
 
-    public static Enclosure CreateEnclosure(long id = TestConstants.EnclosureId)
-    {
-        return new Enclosure
-        {
+    public static Enclosure CreateEnclosure(long id = TestConstants.EnclosureId) {
+        return new Enclosure {
             Id = id,
             UserId = TestConstants.UserId,
             EntryId = TestConstants.EntryId,
@@ -165,35 +148,28 @@ public static class TestDataFactory
         };
     }
 
-    public static FeedIcon CreateFeedIcon(long id = TestConstants.IconId)
-    {
-        return new FeedIcon
-        {
+    public static FeedIcon CreateFeedIcon(long id = TestConstants.IconId) {
+        return new FeedIcon {
             Id = id,
             MimeType = "image/png",
             Data = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
         };
     }
 
-    public static FeedCounters CreateFeedCounters()
-    {
-        return new FeedCounters
-        {
+    public static FeedCounters CreateFeedCounters() {
+        return new FeedCounters {
             ReadCounters = new Dictionary<long, int> { { 100, 50 }, { 101, 30 } },
             UnreadCounters = new Dictionary<long, int> { { 100, 10 }, { 101, 5 } }
         };
     }
 
-    public static EntryResultSet CreateEntryResultSet(int total = 100, int count = 10)
-    {
+    public static EntryResultSet CreateEntryResultSet(int total = 100, int count = 10) {
         var entries = new List<Entry>();
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             entries.Add(CreateEntry(TestConstants.EntryId + i));
         }
-        
-        return new EntryResultSet
-        {
+
+        return new EntryResultSet {
             Total = total,
             Entries = entries
         };

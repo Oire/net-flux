@@ -8,12 +8,14 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Oire.NetFlux.Exceptions;
+using Oire.NetFlux.Logging;
 using Oire.NetFlux.Models;
 
 namespace Oire.NetFlux.Http;
 
-internal class MinifluxHttpClient: IDisposable {
+public class MinifluxHttpClient: IDisposable {
     private readonly HttpClient _httpClient;
+    private readonly bool _ownsHttpClient;
     private readonly string _baseUrl;
     private readonly string? _username;
     private readonly string? _password;
@@ -25,7 +27,7 @@ internal class MinifluxHttpClient: IDisposable {
     private const string UserAgent = "NetFlux Client Library";
     private const int DefaultTimeoutSeconds = 80;
 
-    public MinifluxHttpClient(string endpoint, string? username = null, string? password = null, string? apiKey = null, TimeSpan? timeout = null, ILogger<MinifluxClient>? logger = null) {
+    public MinifluxHttpClient(string endpoint, string? username = null, string? password = null, string? apiKey = null, TimeSpan? timeout = null, ILogger<MinifluxClient>? logger = null, HttpClient? httpClient = null) {
         if (string.IsNullOrWhiteSpace(endpoint)) {
             throw new MinifluxConfigurationException("Endpoint cannot be empty.");
         }
@@ -36,9 +38,15 @@ internal class MinifluxHttpClient: IDisposable {
         _apiKey = apiKey;
         _logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<MinifluxClient>.Instance;
 
-        _httpClient = new HttpClient {
-            Timeout = timeout ?? TimeSpan.FromSeconds(DefaultTimeoutSeconds)
-        };
+        if (httpClient is not null) {
+            _httpClient = httpClient;
+            _ownsHttpClient = false;
+        } else {
+            _httpClient = new HttpClient {
+                Timeout = timeout ?? TimeSpan.FromSeconds(DefaultTimeoutSeconds)
+            };
+            _ownsHttpClient = true;
+        }
 
         _jsonOptions = new JsonSerializerOptions {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -46,10 +54,8 @@ internal class MinifluxHttpClient: IDisposable {
         };
 
         ConfigureHeaders();
-        
-        _logger.LogDebug("MinifluxHttpClient initialized with endpoint: {Endpoint}, authentication: {AuthType}", 
-            endpoint, 
-            !string.IsNullOrEmpty(_apiKey) ? "API Key" : "Basic Auth");
+
+        _logger.LogHttpClientInitialized(endpoint, _apiKey is not null and not "" ? "API Key" : "Basic Auth");
     }
 
     private void ConfigureHeaders() {
@@ -57,37 +63,37 @@ internal class MinifluxHttpClient: IDisposable {
         _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        if (!string.IsNullOrEmpty(_apiKey)) {
+        if (_apiKey is not null and not "") {
             _httpClient.DefaultRequestHeaders.Add("X-Auth-Token", _apiKey);
-        } else if (!string.IsNullOrEmpty(_username) && !string.IsNullOrEmpty(_password)) {
+        } else if (_username is not null and not "" && _password is not null and not "") {
             var authBytes = Encoding.UTF8.GetBytes($"{_username}:{_password}");
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(authBytes));
         }
     }
 
     public async Task<T?> GetAsync<T>(string path, CancellationToken cancellationToken = default) {
-        _logger.LogDebug("GET request to {Path}", path);
+        _logger.LogGetRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Get, path, null, cancellationToken);
 
         return await DeserializeResponseAsync<T>(response, cancellationToken);
     }
 
     public async Task<T?> PostAsync<T>(string path, object? data, CancellationToken cancellationToken = default) {
-        _logger.LogDebug("POST request to {Path}", path);
+        _logger.LogPostRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Post, path, data, cancellationToken);
 
         return await DeserializeResponseAsync<T>(response, cancellationToken);
     }
 
     public async Task<T?> PutAsync<T>(string path, object? data, CancellationToken cancellationToken = default) {
-        _logger.LogDebug("PUT request to {Path}", path);
+        _logger.LogPutRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Put, path, data, cancellationToken);
 
         return await DeserializeResponseAsync<T>(response, cancellationToken);
     }
 
     public async Task DeleteAsync(string path, CancellationToken cancellationToken = default) {
-        _logger.LogDebug("DELETE request to {Path}", path);
+        _logger.LogDeleteRequest(path);
         using var response = await SendRequestAsync(HttpMethod.Delete, path, null, cancellationToken);
         // DELETE operations typically don't return content
     }
@@ -123,7 +129,7 @@ internal class MinifluxHttpClient: IDisposable {
         }
 
         var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        _logger.LogDebug("{Method} {Url} returned {StatusCode}", method, url, (int)response.StatusCode);
+        _logger.LogHttpResponse(method.ToString(), url, (int)response.StatusCode);
         await HandleResponseAsync(response, cancellationToken);
 
         return response;
@@ -137,8 +143,8 @@ internal class MinifluxHttpClient: IDisposable {
         var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
         var errorMessage = TryParseErrorMessage(errorContent);
 
-        _logger.LogError("HTTP request failed with status {StatusCode}: {Error}", (int)response.StatusCode, errorMessage);
-        
+        _logger.LogHttpError((int)response.StatusCode, errorMessage ?? "Unknown error");
+
         throw response.StatusCode switch {
             HttpStatusCode.Unauthorized => new MinifluxAuthenticationException(errorMessage ?? "Unauthorized"),
             HttpStatusCode.Forbidden => new MinifluxForbiddenException(errorMessage ?? "Forbidden"),
@@ -149,7 +155,7 @@ internal class MinifluxHttpClient: IDisposable {
         };
     }
 
-    private string? TryParseErrorMessage(string content) {
+    private static string? TryParseErrorMessage(string content) {
         if (string.IsNullOrWhiteSpace(content)) {
             return null;
         }
@@ -192,7 +198,7 @@ internal class MinifluxHttpClient: IDisposable {
 
     protected virtual void Dispose(bool disposing) {
         if (!_disposed) {
-            if (disposing) {
+            if (disposing && _ownsHttpClient) {
                 _httpClient?.Dispose();
             }
             _disposed = true;
