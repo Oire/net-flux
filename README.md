@@ -8,13 +8,13 @@ A comprehensive .NET client library for the [Miniflux](https://miniflux.app) RSS
 
 ## Features
 
-- ✅ **Complete API Coverage** - Full support for Miniflux REST API v1
-- 🔐 **Dual Authentication** - API key and basic authentication support  
-- 🚀 **Modern Async/Await** - Fully async with CancellationToken support
-- 🛡️ **Typed Exceptions** - Comprehensive error handling with specific exception types
-- 📚 **Full Documentation** - XML documentation for IntelliSense
-- 🧪 **Extensively Tested** - 121+ unit tests with mocked HTTP responses
-- 🏗️ **Enterprise Ready** - Logging support, proper resource disposal, and more
+- ✅ **Complete API Coverage** — Full support for Miniflux REST API v1
+- 🔐 **Dual Authentication** — API key and basic authentication support  
+- 🚀 **Modern Async/Await** — Fully async with CancellationToken support
+- 🛡️ **Typed Exceptions** — Comprehensive error handling with specific exception types
+- 📚 **Full Documentation** — XML documentation for IntelliSense
+- 🧪 **Extensively Tested** — 121+ unit tests with mocked HTTP responses
+- 🏗️ **Enterprise Ready** — Logging support, proper resource disposal, and more
 
 ## Installation
 
@@ -181,27 +181,27 @@ try
 }
 catch (MinifluxNotFoundException)
 {
-    // Handle 404 - Resource not found
+    // Handle 404 — Resource not found
     Console.WriteLine("Feed not found");
 }
 catch (MinifluxAuthenticationException)
 {
-    // Handle 401 - Authentication failed
+    // Handle 401 — Authentication failed
     Console.WriteLine("Invalid credentials or API key");
 }
 catch (MinifluxForbiddenException)
 {
-    // Handle 403 - Access denied
+    // Handle 403 — Access denied
     Console.WriteLine("You don't have permission to access this resource");
 }
 catch (MinifluxBadRequestException ex)
 {
-    // Handle 400 - Bad request
+    // Handle 400 — Bad request
     Console.WriteLine($"Invalid request: {ex.Message}");
 }
 catch (MinifluxServerException)
 {
-    // Handle 500 - Server errors
+    // Handle 500 — Server errors
     Console.WriteLine("Server error occurred");
 }
 catch (MinifluxException ex)
@@ -265,44 +265,44 @@ catch (OperationCanceledException)
 ## API Coverage
 
 ### User Management
-- ✅ Get current user
-- ✅ List all users (admin)
-- ✅ Get user by ID/username
-- ✅ Create/update/delete users
-- ✅ Mark all user entries as read
+- [X] Get current user
+- [X] List all users (admin)
+- [X] Get user by ID/username
+- [X] Create/update/delete users
+- [X] Mark all user entries as read
 
 ### Feed Management  
-- ✅ List feeds with/without counters
-- ✅ Get/create/update/delete feeds
-- ✅ Refresh single feed or all feeds
-- ✅ Get feed icon
-- ✅ Mark feed entries as read
+- [X] List feeds with/without counters
+- [X] Get/create/update/delete feeds
+- [X] Refresh single feed or all feeds
+- [X] Get feed icon
+- [X] Mark feed entries as read
 
 ### Entry Management
-- ✅ Get entries with filtering
-- ✅ Get entries by feed/category
-- ✅ Get/update single entry
-- ✅ Update entry status (read/unread)
-- ✅ Toggle bookmark status
-- ✅ Save to third-party services
-- ✅ Fetch original content
-- ✅ Flush old entries
+- [X] Get entries with filtering
+- [X] Get entries by feed/category
+- [X] Get/update single entry
+- [X] Update entry status (read/unread)
+- [X] Toggle bookmark status
+- [X] Save to third-party services
+- [X] Fetch original content
+- [X] Flush old entries
 
 ### Category Management
-- ✅ List categories with/without counters
-- ✅ Get/create/update/delete categories
-- ✅ Get category feeds
-- ✅ Mark category entries as read
-- ✅ Refresh category feeds
+- [X] List categories with/without counters
+- [X] Get/create/update/delete categories
+- [X] Get category feeds
+- [X] Mark category entries as read
+- [X] Refresh category feeds
 
 ### Other Features
-- ✅ API key management
-- ✅ OPML import/export
-- ✅ Feed discovery
-- ✅ Health checks
-- ✅ Version information
-- ✅ Icons and enclosures
-- ✅ Integration status
+- [X] API key management
+- [X] OPML import/export
+- [X] Feed discovery
+- [X] Health checks
+- [X] Version information
+- [X] Icons and enclosures
+- [X] Integration status
 
 ## Sample Application
 
@@ -343,7 +343,7 @@ Copyright © 2025 [André Polykanine](https://github.com/Menelion), [Oire Softwa
 
 Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
 
-## Acknowledgments
+## Credits
 
-- [Miniflux](https://miniflux.app) - The excellent minimalist RSS reader
+- Huge thanks to Frédéric Guillot for creating [Miniflux](https://miniflux.app) — The excellent minimalist RSS reader
 - All contributors who help improve this library
