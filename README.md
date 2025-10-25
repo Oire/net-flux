@@ -2,91 +2,348 @@
 
 A comprehensive .NET client library for the [Miniflux](https://miniflux.app) RSS reader REST API.
 
+[![NuGet](https://img.shields.io/nuget/v/Oire.NetFlux.svg)](https://www.nuget.org/packages/Oire.NetFlux/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4.svg)](https://dotnet.microsoft.com/download)
+
+## Features
+
+- ✅ **Complete API Coverage** — Full support for Miniflux REST API v1
+- 🔐 **Dual Authentication** — API key and basic authentication support  
+- 🚀 **Modern Async/Await** — Fully async with CancellationToken support
+- 🛡️ **Typed Exceptions** — Comprehensive error handling with specific exception types
+- 📚 **Full Documentation** — XML documentation for IntelliSense
+- 🧪 **Extensively Tested** — 121+ unit tests with mocked HTTP responses
+- 🏗️ **Enterprise Ready** — Logging support, proper resource disposal, and more
+
 ## Installation
 
 ```bash
 dotnet add package Oire.NetFlux
 ```
 
-## Features
+## Quick Start
 
-- Full support for Miniflux REST API v1
-- Modern C# with nullable reference types
-- Async/await throughout
-- Proper exception handling with typed exceptions
-- Support for both API key and basic authentication
-- Comprehensive XML documentation
-
-## Usage
-
-### Basic Authentication
+### Using API Key Authentication (Recommended)
 
 ```csharp
 using Oire.NetFlux;
+using Oire.NetFlux.Models;
 
-var client = new MinifluxClient("https://your-miniflux-instance.com", "username", "password");
-
-// Get current user
-var user = await client.GetCurrentUserAsync();
-Console.WriteLine($"Logged in as: {user.Username}");
-
-// Get all feeds
-var feeds = await client.GetFeedsAsync();
-foreach (var feed in feeds)
-{
-    Console.WriteLine($"{feed.Title}: {feed.FeedUrl}");
-}
-```
-
-### API Key Authentication
-
-```csharp
+// Create client with API key
 var client = new MinifluxClient("https://your-miniflux-instance.com", "your-api-key");
 
 // Get unread entries
-var filter = new EntryFilter 
+var entries = await client.GetEntriesAsync(new EntryFilter 
 { 
     Status = EntryStatus.Unread,
-    Limit = 10 
-};
-var entries = await client.GetEntriesAsync(filter);
+    Limit = 20 
+});
+
+foreach (var entry in entries.Entries)
+{
+    Console.WriteLine($"{entry.Title} - {entry.FeedTitle}");
+}
 ```
 
-### Error Handling
+### Using Basic Authentication
 
 ```csharp
-try {
+var client = new MinifluxClient("https://your-miniflux-instance.com", "username", "password");
+
+// Get current user info
+var user = await client.GetCurrentUserAsync();
+Console.WriteLine($"Logged in as: {user.Username}");
+```
+
+## Common Usage Scenarios
+
+### Managing Feeds
+
+```csharp
+// Add a new feed
+var newFeed = await client.CreateFeedAsync(new FeedCreateRequest
+{
+    FeedUrl = "https://example.com/rss",
+    CategoryId = 1
+});
+
+// Get all feeds with unread counts
+var feeds = await client.GetFeedsWithCountersAsync();
+foreach (var feed in feeds)
+{
+    Console.WriteLine($"{feed.Title}: {feed.UnreadCount} unread");
+}
+
+// Refresh a specific feed
+await client.RefreshFeedAsync(feedId);
+
+// Update feed settings
+await client.UpdateFeedAsync(feedId, new FeedUpdateRequest
+{
+    Title = "New Title",
+    CategoryId = 2,
+    Disabled = false
+});
+```
+
+### Working with Entries
+
+```csharp
+// Get entries with advanced filtering
+var filter = new EntryFilter
+{
+    Status = EntryStatus.Unread,
+    Starred = true,
+    Search = "technology",
+    CategoryId = 5,
+    Limit = 50,
+    Direction = "desc",
+    Order = "published_at",
+    After = DateTime.UtcNow.AddDays(-7)
+};
+
+var result = await client.GetEntriesAsync(filter);
+Console.WriteLine($"Found {result.Total} matching entries");
+
+// Mark entry as read
+await client.UpdateEntriesStatusAsync(new[] { entryId }, EntryStatus.Read);
+
+// Star/bookmark an entry
+await client.ToggleEntryBookmarkAsync(entryId);
+
+// Save to third-party service (Pocket, Instapaper, etc.)
+await client.SaveEntryAsync(entryId);
+
+// Fetch original content
+var content = await client.FetchEntryContentAsync(entryId);
+```
+
+### Category Management
+
+```csharp
+// Create a category
+await client.CreateCategoryAsync("Technology");
+
+// Get categories with feed counts
+var categories = await client.GetCategoriesWithCountersAsync();
+foreach (var category in categories)
+{
+    Console.WriteLine($"{category.Title}: {category.FeedCount} feeds, {category.TotalUnread} unread");
+}
+
+// Mark all entries in category as read
+await client.MarkCategoryEntriesAsReadAsync(categoryId);
+```
+
+### OPML Import/Export
+
+```csharp
+// Export feeds as OPML
+string opml = await client.ExportOpmlAsync();
+File.WriteAllText("feeds.opml", opml);
+
+// Import OPML file
+string opmlContent = File.ReadAllText("feeds.opml");
+await client.ImportOpmlAsync(opmlContent);
+```
+
+### Feed Discovery
+
+```csharp
+// Discover feeds from a URL
+var subscriptions = await client.DiscoverSubscriptionsAsync("https://example.com");
+foreach (var sub in subscriptions)
+{
+    Console.WriteLine($"Found: {sub.Title} ({sub.Type}) - {sub.Url}");
+}
+```
+
+### Health Checks and Version Info
+
+```csharp
+// Check if Miniflux is healthy
+bool isHealthy = await client.HealthCheckAsync();
+
+// Get version information
+var version = await client.GetVersionInfoAsync();
+Console.WriteLine($"Miniflux {version.Version} (Go {version.GoVersion})");
+```
+
+## Error Handling
+
+NetFlux provides typed exceptions for different error scenarios:
+
+```csharp
+try 
+{
     var feed = await client.GetFeedAsync(123);
 }
 catch (MinifluxNotFoundException)
 {
+    // Handle 404 — Resource not found
     Console.WriteLine("Feed not found");
 }
 catch (MinifluxAuthenticationException)
 {
-    Console.WriteLine("Authentication failed");
+    // Handle 401 — Authentication failed
+    Console.WriteLine("Invalid credentials or API key");
+}
+catch (MinifluxForbiddenException)
+{
+    // Handle 403 — Access denied
+    Console.WriteLine("You don't have permission to access this resource");
+}
+catch (MinifluxBadRequestException ex)
+{
+    // Handle 400 — Bad request
+    Console.WriteLine($"Invalid request: {ex.Message}");
+}
+catch (MinifluxServerException)
+{
+    // Handle 500 — Server errors
+    Console.WriteLine("Server error occurred");
 }
 catch (MinifluxException ex)
 {
+    // Handle any other Miniflux-related errors
     Console.WriteLine($"Error: {ex.Message}");
+}
+```
+
+## Advanced Configuration
+
+### Using Custom HttpClient
+
+```csharp
+// Use your own HttpClient instance (e.g., from HttpClientFactory)
+var httpClient = httpClientFactory.CreateClient("miniflux");
+var client = new MinifluxClient(httpClient, "https://miniflux.example.com", "api-key");
+```
+
+### Logging Integration
+
+NetFlux uses Microsoft.Extensions.Logging for structured logging:
+
+```csharp
+using Microsoft.Extensions.Logging;
+
+// Configure logging
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(LogLevel.Debug);
+});
+
+var logger = loggerFactory.CreateLogger<MinifluxClient>();
+
+// Pass logger to client
+var client = new MinifluxClient(
+    "https://miniflux.example.com", 
+    "api-key",
+    logger: logger
+);
+```
+
+### Working with Cancellation Tokens
+
+All async methods support cancellation:
+
+```csharp
+using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+
+try
+{
+    var feeds = await client.GetFeedsAsync(cts.Token);
+}
+catch (OperationCanceledException)
+{
+    Console.WriteLine("Operation timed out");
 }
 ```
 
 ## API Coverage
 
-- [X] User management
-- [X] Category management  
-- [X] Feed management
-- [X] Entry management
+### User Management
+- [X] Get current user
+- [X] List all users (admin)
+- [X] Get user by ID/username
+- [X] Create/update/delete users
+- [X] Mark all user entries as read
+
+### Feed Management  
+- [X] List feeds with/without counters
+- [X] Get/create/update/delete feeds
+- [X] Refresh single feed or all feeds
+- [X] Get feed icon
+- [X] Mark feed entries as read
+
+### Entry Management
+- [X] Get entries with filtering
+- [X] Get entries by feed/category
+- [X] Get/update single entry
+- [X] Update entry status (read/unread)
+- [X] Toggle bookmark status
+- [X] Save to third-party services
+- [X] Fetch original content
+- [X] Flush old entries
+
+### Category Management
+- [X] List categories with/without counters
+- [X] Get/create/update/delete categories
+- [X] Get category feeds
+- [X] Mark category entries as read
+- [X] Refresh category feeds
+
+### Other Features
 - [X] API key management
 - [X] OPML import/export
 - [X] Feed discovery
+- [X] Health checks
+- [X] Version information
 - [X] Icons and enclosures
+- [X] Integration status
+
+## Sample Application
+
+Try the interactive console sample to explore NetFlux features:
+
+```bash
+# Clone the repository
+git clone https://github.com/Oire/net-flux.git
+cd net-flux
+
+# Run the sample
+cd samples/NetFlux.Samples.Console
+dotnet run
+```
+
+The sample demonstrates:
+- Interactive authentication (API key or username/password)
+- Feed and category management
+- Entry browsing and filtering
+- OPML export
+- Feed discovery
+- All major NetFlux features
+
+Perfect for learning the API or testing with your Miniflux instance!
 
 ## Requirements
 
 - .NET 8.0 or later
+- Miniflux 2.0.0 or later
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-Copyright © 2025 [André Polykanine](https://github.com/Menelion), [Oire Software](https://github.com/Oire) and contributors. Licensed under the Apache License, Version 2.0.
+Copyright © 2025 [André Polykanine](https://github.com/Menelion), [Oire Software](https://github.com/Oire) and contributors. 
+
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
+
+## Credits
+
+- Huge thanks to Frédéric Guillot for creating [Miniflux](https://miniflux.app) — The excellent minimalist RSS reader
+- All contributors who help improve this library
