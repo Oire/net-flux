@@ -5,22 +5,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Oire.NetFlux</RootNamespace>
-    
-    <!-- Code analysis -->
     <AnalysisLevel>latest</AnalysisLevel>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsNotAsErrors>NU1701</WarningsNotAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    
-    <!-- Package properties -->
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Oire.NetFlux</PackageId>
     <Authors>André Polykanine</Authors>
     <Company>Oire Software</Company>
     <Product>NetFlux</Product>
     <Description>A comprehensive .NET client library for the Miniflux RSS reader REST API</Description>
-    <Copyright>Copyright © 2025 Oire Software</Copyright>
+    <Copyright>Copyright © 2025 André Polykanine, Oire Software</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Oire/net-flux</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Oire/net-flux</RepositoryUrl>
@@ -33,10 +29,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
     <PackageReference Include="System.Text.Json" Version="9.0.9" />
-    
-    <!-- Code analyzers -->
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" PrivateAssets="all" />
   </ItemGroup>
-
 </Project>
