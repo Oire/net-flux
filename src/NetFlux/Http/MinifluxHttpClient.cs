@@ -184,7 +184,7 @@ public class MinifluxHttpClient: IDisposable {
         }
 
         var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        _logger.LogHttpResponse(method.ToString(), url, (int)response.StatusCode);
+        _logger.LogHttpResponse(method.Method, url, (int)response.StatusCode);
         await HandleResponseAsync(response, cancellationToken);
 
         return response;
