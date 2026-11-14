@@ -4,7 +4,7 @@ A comprehensive .NET client library for the [Miniflux](https://miniflux.app) RSS
 
 [![NuGet](https://img.shields.io/nuget/v/Oire.NetFlux.svg)](https://www.nuget.org/packages/Oire.NetFlux/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4.svg)](https://dotnet.microsoft.com/download)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/download)
 
 ## Features
 
@@ -330,7 +330,7 @@ Perfect for learning the API or testing with your Miniflux instance!
 
 ## Requirements
 
-- .NET 8.0 or later
+- .NET 10.0 or later
 - Miniflux 2.0.0 or later
 
 ## Contributing

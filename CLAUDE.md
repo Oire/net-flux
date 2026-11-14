@@ -1,7 +1,7 @@
 # NetFlux - Miniflux .NET Client
 
 ## Project Overview
-NetFlux is a .NET 8.0 client library for the Miniflux RSS reader REST API. It provides a fully async, modern C# implementation with comprehensive API coverage, robust error handling, and enterprise-grade quality.
+NetFlux is a .NET 10.0 client library for the Miniflux RSS reader REST API. It provides a fully async, modern C# implementation with comprehensive API coverage, robust error handling, and enterprise-grade quality.
 
 ## Architecture
 
